@@ -2,7 +2,7 @@
 import serial
 import time
 
-ser = serial.Serial("/dev/ttyAMA0", 115200)
+ser = serial.Serial("/dev/ttyAMA0", 38400)
 def main():
     """
     while True:
@@ -14,7 +14,7 @@ def main():
         time.sleep(0.1)
 """
     while True: 
-        ser.write("hellow world")
+        ser.write("on")
         time.sleep(0.3)
     
 if __name__ == '__main__':

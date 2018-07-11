@@ -17,7 +17,7 @@ def main():
         # 必要的软件延时
         time.sleep(0.1)
         """
-        ser.write('Hellow')
+        ser.write('on')
 
 if __name__ == '__main__':
     try:

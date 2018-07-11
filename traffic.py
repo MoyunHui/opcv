@@ -3,17 +3,32 @@ import cv2
 import time
 import datetime
 import threading
+import serial
 
-time = 0
+def main():
+    """
+    while True:
+        count = ser.inWaiting()
+        if count != 0:
+            recv = ser.read(count)
+            ser.write(recv)
+        ser.flushInput()
+        time.sleep(0.1)
+"""
+    while True: 
+                time.sleep(0.3)
+
+
+g_time = 0
 
 def fun_timer():
-    global time
-    time = time + 1
+    global g_time
+    g_time = g_time + 1
     timer = threading.Timer(1, fun_timer)
     timer.start()
 
-def detection(road, time_road):
-    global time
+def detection(road, road_time):
+    global g_time
     car_num = 0
     start_flag = 0
     cap = cv2.VideoCapture(road)
@@ -44,27 +59,54 @@ def detection(road, time_road):
                         start_flag = 0
                         car_num = car_num + 1
                         print "car_num = ", car_num
-        if time >= time_road:
-            print "time_road = ", time_road
+        if g_time >= road_time:
+            print "road_time = ", road_time
             print "road = ", road
-            time = 0
+            g_time = 0
             cap.release()
             return car_num
 
 def main():
+
+    ser = serial.Serial("/dev/ttyAMA0", 38400)
     timer = threading.Timer(1, fun_timer)
     timer.start()
     
-    time_road0, time_road1, time_road2, time_road3 = [2, 3, 4, 5]
-    while True:
-        road0_num = detection(0, time_road0)
+    while True: 
+        road0_time, road1_time, road2_time, road3_time = [25, 25, 19, 19]
+
+        road0_num = detection(0, road0_time)
         print "road0_num = ", road0_num
-        road1_num = detection(1, time_road1)
+        road1_num = detection(1, road1_time)
         print "road1_num = ", road1_num
-        road2_num = detection(2, time_road2)
+        road2_num = detection(2, road2_time)
         print "road2_num = ", road2_num
-        road3_num = detection(3, time_road3)
+        road3_num = detection(3, road3_time)
         print "road3_num = ", road3_num
+        ave0 = 10*road0_num/road0_time
+        ave1 = 10*road1_num/road1_time
+        ave2 = 10*road2_num/road2_time
+        ave3 = 10*road3_num/road3_time
+        print "ave = ", ave0, ave1, ave2, ave3
+
+        diff = int((ave0+ave1) - (ave2+ave3))
+        if abs(diff) >= 1:
+            road0_time = road0_time + 2*diff
+            road1_time = road1_time + 2*diff
+            road2_time = road2_time - 2*diff
+            road3_time = road3_time - 2*diff
+
+        diff = int((ave0-ave1))
+        if abs(diff) >= 1:
+            road0_time = road0_time + 2*diff
+            road1_time = road1_time - 2*diff
+
+        diff = int((ave2-ave3))
+        if abs(diff) >= 1:
+            road2_time = road2_time + 2*diff
+            road3_time = road3_time - 2*diff
+        print "%d, %d, %d, %d" % (road0_time, road1_time, road2_time, road3_time)
+        ser.write("a%db%dc%dd%d" % (road0_time, road1_time, road2_time, road3_time))
 
 
 if __name__ == "__main__":
