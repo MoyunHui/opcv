@@ -5,19 +5,6 @@ import datetime
 import threading
 import serial
 
-def main():
-    """
-    while True:
-        count = ser.inWaiting()
-        if count != 0:
-            recv = ser.read(count)
-            ser.write(recv)
-        ser.flushInput()
-        time.sleep(0.1)
-"""
-    while True: 
-                time.sleep(0.3)
-
 
 g_time = 0
 
@@ -83,28 +70,28 @@ def main():
         print "road2_num = ", road2_num
         road3_num = detection(3, road3_time)
         print "road3_num = ", road3_num
-        ave0 = 10*road0_num/road0_time
-        ave1 = 10*road1_num/road1_time
-        ave2 = 10*road2_num/road2_time
-        ave3 = 10*road3_num/road3_time
+        ave0 = 20*road0_num/road0_time
+        ave1 = 20*road1_num/road1_time
+        ave2 = 20*road2_num/road2_time
+        ave3 = 20*road3_num/road3_time
         print "ave = ", ave0, ave1, ave2, ave3
 
         diff = int((ave0+ave1) - (ave2+ave3))
         if abs(diff) >= 1:
-            road0_time = road0_time + 2*diff
-            road1_time = road1_time + 2*diff
-            road2_time = road2_time - 2*diff
-            road3_time = road3_time - 2*diff
+            road0_time = road0_time + diff
+            road1_time = road1_time + diff
+            road2_time = road2_time - diff
+            road3_time = road3_time - diff
 
         diff = int((ave0-ave1))
         if abs(diff) >= 1:
-            road0_time = road0_time + 2*diff
-            road1_time = road1_time - 2*diff
+            road0_time = road0_time + diff
+            road1_time = road1_time - diff
 
         diff = int((ave2-ave3))
         if abs(diff) >= 1:
-            road2_time = road2_time + 2*diff
-            road3_time = road3_time - 2*diff
+            road2_time = road2_time + diff
+            road3_time = road3_time - diff
         print "%d, %d, %d, %d" % (road0_time, road1_time, road2_time, road3_time)
         ser.write("a%db%dc%dd%d" % (road0_time, road1_time, road2_time, road3_time))
 
