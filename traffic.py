@@ -30,6 +30,7 @@ def detection(road, road_time):
         cv2.drawContours(fgmask, contours, -1, (0, 255, 0), 2)
 
         minArea = 10000
+        maxArea = 18000
         for c in contours:
             Area = cv2.contourArea(c)
             if Area < minArea:
@@ -37,21 +38,23 @@ def detection(road, road_time):
                 continue
             else:
                 (x, y, w, h) = cv2.boundingRect(c)
-                if 60<y<160:
-                    if x >= 430:
+                if 30<y<400:
+                    if x >= 400:
                         start_flag = 1
-                        print "start 1"
-                        time.sleep(0.05)
+                        time.sleep(0.01)
                     elif start_flag==1 and x <= 250:
                         start_flag = 0
                         car_num = car_num + 1
-                        print "car_num = ", car_num
+                        print "road %d " % road, "car_num = ", car_num
+        #cv2.imshow('frame', frame)
+        #cv2.waitKey(1)
+
         if g_time >= road_time:
-            print "road_time = ", road_time
-            print "road = ", road
             g_time = 0
             cap.release()
             return car_num
+
+        
 
 def main():
 
@@ -60,21 +63,22 @@ def main():
     timer.start()
     
     while True: 
-        road0_time, road1_time, road2_time, road3_time = [25, 25, 19, 19]
+        road0_time, road1_time, road2_time, road3_time = [22, 22, 22, 22]
 
+
+        print "road 0  ", "  start"
         road0_num = detection(0, road0_time)
-        print "road0_num = ", road0_num
+        print "road 1  ", "  start"
         road1_num = detection(1, road1_time)
-        print "road1_num = ", road1_num
+        print "road 2  ", "  start"
         road2_num = detection(2, road2_time)
-        print "road2_num = ", road2_num
+        print "road 3  ", "  start"
         road3_num = detection(3, road3_time)
-        print "road3_num = ", road3_num
-        ave0 = 20*road0_num/road0_time
-        ave1 = 20*road1_num/road1_time
-        ave2 = 20*road2_num/road2_time
-        ave3 = 20*road3_num/road3_time
-        print "ave = ", ave0, ave1, ave2, ave3
+        ave0 = 14*road0_num/road0_time
+        ave1 = 14*road1_num/road1_time
+        ave2 = 14*road2_num/road2_time
+        ave3 = 14*road3_num/road3_time
+        print "car_num = ", road0_num, road1_num, road2_num, road3_num
 
         diff = int((ave0+ave1) - (ave2+ave3))
         if abs(diff) >= 1:

@@ -1,18 +1,16 @@
 import cv2
 
-w = 100
-h = 100
-color = (0, 255, 0)
+for i in range(4):
+    print i
+    cap = cv2.VideoCapture(i)
+    while(1):
+        ret, frame = cap.read()
+        cv2.rectangle(frame, (0, 30), (250, 400), (0, 255, 0), 2)
+        cv2.rectangle(frame, (400, 30), (640, 400), (0, 255, 0), 2)
 
-x1,y1 = 120,80
-
-cap = cv2.VideoCapture(0)
-while(1):
-    ret, frame = cap.read()
-    cv2.rectangle(frame,(x1,y1), (x1+w, y1+h), color)
-    cv2.imshow("cap", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
+        cv2.imshow("cap", frame)
+        if cv2.waitKey(1) == ord('q'):
+            cv2.destroyAllWindows()
+            break
 cap.release()
 cv2.destroyAllWindows()
